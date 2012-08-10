@@ -4,20 +4,22 @@
 
 A basic necessity for most HTTP servers is to be able to serve static files. Thankfully, it is not that hard to do in Node. First you find the file, open it and then pipe it to the client response.  Here is an example of a script that will serve the files in the current directory according to :
 
-    var fs = require('fs'),
-	    http = require('http');
+```javascript
+var fs = require('fs'),
+http = require('http');
 
-	http.createServer(function (req, res) {
-	  var file = fs.createReadStream(__dirname + req.url);
-	  
-	  file.on('error', function(err) {
-	  	res.writeHead(400);
-	  	res.end(err.message);
-	  });
+http.createServer(function (req, res) {
+  var file = fs.createReadStream(__dirname + req.url);
 
-	  file.pipe(res);
+  file.on('error', function(err) {
+    res.writeHead(400);
+    res.end(err.message);
+  });
 
-	}).listen(8080);
+  file.pipe(res);
+
+}).listen(8080);
+```
 
 The server creates a file readable stream based on the request URL. If there is an error, we simply assume that the file was not found. If not, the file gets successfully piped into the response and both streams are closed when the file end is reached.
 
@@ -38,13 +40,15 @@ Each of these can be addressed individually without much difficulty. You can sen
 
 There is a good static file server called [node-static](https://github.com/cloudhead/node-static) written by Alexis Sellier which you can leverage. Here is a script which functions similarly to the previous one:
 
-    var static = require('node-static');
-    var http = require('http');
+```javascript
+var static = require('node-static');
+var http = require('http');
 
-    var file = new(static.Server)();
+var file = new(static.Server)();
 
-    http.createServer(function (req, res) {
-      file.serve(req, res);
-    }).listen(8080);
+http.createServer(function (req, res) {
+  file.serve(req, res);
+}).listen(8080);
+```
 
 This is a fully functional file server that doesn't have any of the bugs previously mentioned. This is just the most basic set up, there are more things you can do if you look at [the api](https://github.com/cloudhead/node-static#readme). Also since it is an open source project, you can always modify it to your needs (and feel free to contribute back to the project!).
